@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const API_URL = 'http://mlmx2356.odns.fr/apply-tracking/api/auth/'
+const API_URL = process.env.REACT_APP_API_AUTH_URL
 
 const register = (username, email, password) => {
   return axios.post(API_URL + 'signup', {
