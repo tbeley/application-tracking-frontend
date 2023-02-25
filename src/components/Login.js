@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import * as Yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { useForm } from 'react-hook-form'
@@ -8,6 +8,13 @@ import AuthService from '../services/auth.service'
 const Login = () => {
   const navigate = useNavigate()
   const [loading, setLoading] = useState(false)
+  const currentUser = AuthService.getCurrentUser()
+
+  useEffect(() => {
+    if (currentUser) {
+      navigate('/')
+    }
+  }, [currentUser, navigate])
 
   const validationSchema = Yup.object().shape({
     username: Yup.string()
@@ -40,8 +47,8 @@ const Login = () => {
             error.response.data.message) ||
           error.message ||
           error.toString()
-        console.log(resMessage)
         setLoading(() => false)
+        alert(`Error: ${resMessage}`)
       }
     )
   }
