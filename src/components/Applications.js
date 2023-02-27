@@ -5,6 +5,7 @@ import AuthService from '../services/auth.service'
 import AddApplication from './AddApplication'
 import ApplicationRow from './ApplicationRow'
 import { ROW_HEADERS } from '../constants/row-headers'
+import AuthVerify from '../common/AuthVerify'
 
 const Applications = () => {
   const navigate = useNavigate()
@@ -21,21 +22,37 @@ const Applications = () => {
   }, [currentUser, navigate])
 
   useEffect(() => {
-    ApplicationService.getApplications().then((response) => {
-      setApplications(() => response.data)
-    })
+    ApplicationService.getApplications()
+      .then((response) => {
+        setApplications(() => response.data)
+      })
+      .catch((error) => {
+        console.log(error)
+        setNotification({
+          message: 'Erreur lors de la récupération des candidatures',
+          color: 'danger',
+        })
+      })
   }, [])
 
   const handleRowDelete = (id) => {
-    ApplicationService.deleteApplication(id).then(() => {
-      setApplications(
-        applications.filter((application) => application.id !== id)
-      )
-      setNotification({
-        message: 'Candidature supprimée',
-        color: 'danger',
+    ApplicationService.deleteApplication(id)
+      .then(() => {
+        setApplications(
+          applications.filter((application) => application.id !== id)
+        )
+        setNotification({
+          message: 'Candidature supprimée',
+          color: 'danger',
+        })
       })
-    })
+      .catch((error) => {
+        console.log(error)
+        setNotification({
+          message: 'Erreur lors de la suppression de la candidature',
+          color: 'danger',
+        })
+      })
   }
 
   const renderHeaders = () => {
@@ -124,9 +141,12 @@ const Applications = () => {
           <thead>
             <tr>{renderHeaders()}</tr>
           </thead>
-          <tbody className="table-group-divider"> {renderSortedApplications()}</tbody>
+          <tbody className='table-group-divider'>
+            {renderSortedApplications()}
+          </tbody>
         </table>
       </div>
+      <AuthVerify logOut={AuthService.logout} />
     </div>
   )
 }

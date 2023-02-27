@@ -26,16 +26,25 @@ const AddApplication = ({ setApplications, setNotification }) => {
 
   const onSubmit = (data) => {
     setLoading(() => true)
-    ApplicationService.createApplication(data).then((response) => {
-      const newApplication = response.data.application
-      setApplications((prev) => [...prev, newApplication])
-      setLoading(() => false)
-      setOpened(() => false)
-      setNotification({
-        message: 'Candidature ajoutée',
-        color: 'success',
+    ApplicationService.createApplication(data)
+      .then((response) => {
+        const newApplication = response.data.application
+        setApplications((prev) => [...prev, newApplication])
+        setLoading(() => false)
+        setOpened(() => false)
+        setNotification({
+          message: 'Candidature ajoutée',
+          color: 'success',
+        })
       })
-    })
+      .catch((error) => {
+        setLoading(() => false)
+        console.log(error)
+        setNotification({
+          message: "Erreur lors de l'ajout de la candidature",
+          color: 'danger',
+        })
+      })
   }
   return (
     <>
